@@ -133,7 +133,7 @@ function App() {
   },[])
 
   const time = Date.UTC(2020,5,24,7,0,0,0) // goldenrain acctivation
-  let isActive = true
+  let isActive = false
   if (Date.now() > time )
     isActive = true
 
