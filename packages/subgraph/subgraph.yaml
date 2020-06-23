@@ -5,17 +5,17 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: CeaErc20
+    name: GoldenRain
     network: mainnet
     source:
-      abi: erc20
-      address: "0xc1C0472c0C80bCcDC7F5D01A376Bd97a734B8815"
+      abi: goldenrain
+      address: "0xF56ccB441153119A373F0aD4909B8f50121a33bd"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
       abis:
-        - name: erc20
-          file: ../contracts/src/abis/erc20.json
+        - name: goldenrain
+          file: ../contracts/src/abis/goldenrain.json
       entities:
         - Token
         - Transfer
