@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTimer } from 'react-timer-hook';
+import { Text } from "@chakra-ui/core"
 
 export default function CountDown({ expiryTimestamp }) {
   const {
@@ -17,9 +18,9 @@ export default function CountDown({ expiryTimestamp }) {
 
   return (
     <div style={{textAlign: 'center'}}>
-      <div style={{fontSize: '100px'}}>
+      <Text fontSize={{base:"50px", md:"100px"}} >
         <span>{days.toString().padStart(2,'0')}</span>:<span>{hours.toString().padStart(2,'0')}</span>:<span>{minutes.toString().padStart(2,'0')}</span>:<span>{seconds.toString().padStart(2,'0')}</span>
-      </div>
+      </Text>
     </div>
   );
 }

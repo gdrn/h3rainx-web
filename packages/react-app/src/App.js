@@ -43,6 +43,8 @@ const web3Modal = new Web3Modal({
 
 function App() {
 
+  let isMM = false;
+
   const [provider, setProvider] = useState(null)
   const [web3, setWeb3] = useState(null)
   const [goldRainContract, setGoldRainContract] = useState(null)
@@ -63,13 +65,13 @@ function App() {
   })
 
   const getWeb3 = async () => {
-    console.log('getting web3')
     let provider = null
     if (window.ethereum) {
       provider = window.ethereum
       try {
         // Request account access
         await window.ethereum.enable();
+        isMM = true;
       } catch (error) {
         // User denied account access...
         alert("User denied account access")
@@ -79,9 +81,9 @@ function App() {
     else if (window.web3) {
       provider = window.web3.currentProvider;
     }
-    // If no injected web3 instance is detected, try modal
+    // If no injected web3 instance is detected, use infura
     else {
-      provider = await web3Modal.connect()
+      provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/80234bcec5d848e0b3471f49c8cd7303')
     }
     setProvider(provider)
     const web3 = new Web3(provider)
@@ -93,7 +95,7 @@ function App() {
     const rainContract = new web3.eth.Contract(abis.erc20, addresses.rain)
     setRainContract(rainContract)
     const updateGdrnData = async () => {
-      const multiDataGdrn = await goldRainContract.methods.multiData().call({from:accounts[0]})
+      const multiDataGdrn = await goldRainContract.methods.multiData().call()
       let userPct = "0"
       if(multiDataGdrn["1"] !== "0"){
         userPct = web3.utils.toBN(multiDataGdrn["2"]).mul(web3.utils.toBN(100)).div(web3.utils.toBN(multiDataGdrn["1"]))
@@ -110,6 +112,7 @@ function App() {
       })
     }
     const updateRainData = async () => {
+      if(!accounts || accounts.length < 1) return
       const multiDataRain = await Promise.all([
         rainContract.methods.allowance(accounts[0], addresses.goldenRain).call()
       ])
@@ -117,12 +120,14 @@ function App() {
         userAllowance: web3.utils.fromWei(multiDataRain[0])
       })
     }
-    window.ethereum.on("accountsChanged", async function() {
-      const accounts = await web3.eth.getAccounts();
-      setAccounts(accounts)
-      await updateGdrnData()
-      await updateRainData()
-    });
+    if(isMM){
+      window.ethereum.on("accountsChanged", async () => {
+        const accounts = await web3.eth.getAccounts();
+        setAccounts(accounts)
+        await updateGdrnData()
+        await updateRainData()
+      });
+    }
     await updateGdrnData()
     setInterval(updateGdrnData, 1000)
     setInterval(updateRainData, 1000)
@@ -133,7 +138,7 @@ function App() {
   },[])
 
   const time = Date.UTC(2020,5,24,7,0,0,0) // goldenrain acctivation
-  let isActive = false
+  let isActive = true
   if (Date.now() > time )
     isActive = true
 
@@ -144,7 +149,7 @@ function App() {
         <Flex maxW="100vw" h="70px" align="center" >
           <Image src="/gdrn-logo.png" alt="Gold Rain Logo" display="inline-block" m="20px" w="50px" h="50px" />
           <Heading as="h1" display="inline-block">Gold Rain : GDRN</Heading>
-          { web3 && accounts[0] ?
+          { (web3 && accounts.length>0) ?
             (<Text ml="auto">Account: {accounts[0].substring(0, 6)}&hellip;</Text>)
             :
             (<Button variant="solid" bg="teal.500" ml="auto" onClick={getWeb3}>Connect</Button>)
@@ -220,12 +225,18 @@ function App() {
                     <Text fontSize="lg" w="200px" p="10px" display="inline-block">Stake %</Text>
                     <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataGdrn.userPct)}%</Text>
                     <br/>
-                    <Text fontSize="lg" p="10px" display="block" mt="20px">Earn 2% commissions when anyone uses your link.</Text>
-                    <Box bg="transparent" border="solid" width="100%" p="20px">
-                      <Text fontSize="lg" display="block" textAlign="center">
-                        https://goldrain.vercel.app/#/{accounts[0]}
-                      </Text>
-                    </Box>
+                    {accounts.length>0 &&
+                      (
+                        <>
+                          <Text fontSize="lg" p="10px" display="block" mt="20px">Earn 2% commissions when anyone uses your link.</Text>
+                          <Box bg="transparent" border="solid" width="100%" p="20px">
+                            <Text fontSize="lg" display="block" textAlign="center">
+                              https://goldrain.vercel.app/#/{accounts[0]}
+                            </Text>
+                          </Box>
+                        </>
+                      )
+                  }
                   </TabPanel>
                 </TabPanels>
               </Tabs>
@@ -250,8 +261,8 @@ function App() {
         }
 
       </Box>
-      <Box w="100%" minH="100px" bg="gray.600" color="gray.200" position="relative"  p="40px" textAlign="center" >
-        <Link color="gray.400" m="10px" href="https://discord.gg/vqX47KK">Discord</Link>
+      <Box w="100%" minH="100px" bg="gray.600" color="gray.200" position="relative"  p="40px" textAlign="center" fontSize={{base:"sm", md:"md"}} >
+        <Link color="gray.400" m="10px" href="https://discord.gg/vqX47KK" >Discord</Link>
         <Link color="gray.400" m="10px" href="https://etherscan.io/address/0x438f8795f8dfb195140eeb5ead8b0e794bf33ee8">Etherscan</Link>
         <Link color="gray.400" m="10px" href="https://github.com/gdrn/goldenrain-web">Github</Link>
         <Link color="gray.400" m="10px" href="https://rainnetwork.online/">RainNetwork</Link>
