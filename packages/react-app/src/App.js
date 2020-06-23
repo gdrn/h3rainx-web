@@ -60,7 +60,7 @@ function App() {
                 <Link color="teal.300" href="https://discord.gg/vqX47KK">Discord</Link>
               </Text>
               <Text fontSize="3xl" w="100%" p="20px" p="0" >
-                <Link color="teal.300" href="https://etherscan.io/address/0xf56ccb441153119a373f0ad4909b8f50121a33bd">Etherscan</Link>
+                <Link color="teal.300" href="https://etherscan.io/address/0x438f8795f8dfb195140eeb5ead8b0e794bf33ee8">Etherscan</Link>
               </Text>
               <Text fontSize="3xl" w="100%" p="20px" p="0" >
                 <Link color="teal.300" href="https://rainnetwork.online/">RainNetwork</Link>
@@ -70,7 +70,7 @@ function App() {
       </Box>
       <Box w="100%" minH="100px" bg="gray.600" color="gray.200" position="relative"  p="40px" textAlign="center" >
         <Link color="gray.400" m="10px" href="https://discord.gg/vqX47KK">Discord</Link>
-        <Link color="gray.400" m="10px" href="https://etherscan.io/address/0xf56ccb441153119a373f0ad4909b8f50121a33bd">Etherscan</Link>
+        <Link color="gray.400" m="10px" href="https://etherscan.io/address/0x438f8795f8dfb195140eeb5ead8b0e794bf33ee8">Etherscan</Link>
         <Link color="gray.400" m="10px" href="https://github.com/gdrn/goldenrain-web">Github</Link>
         <Link color="gray.400" m="10px" href="https://rainnetwork.online/">RainNetwork</Link>
       </Box>
