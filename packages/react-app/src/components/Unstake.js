@@ -46,7 +46,7 @@ export default function Unstake({ multiDataRain, multiDataGdrn, web3, accounts, 
       <NumberInput value={unstakeValue} min={1} max={1000000000}   w="50%" ml="auto" mr="auto" color="gray.700" >
         <NumberInputField onChange={e => {setUnstakeValue(e.target.value)}} />
       </NumberInput>
-      <Text fontSize="lg" p="10px" mb="20px" textAlign="center">
+      <Text fontSize="lg" p="10px" pb="0px" textAlign="center">
         Receive
         {web3 ?
           " "+(unstakeValue * multiDataGdrn.sellPrice )+" "
@@ -55,6 +55,7 @@ export default function Unstake({ multiDataRain, multiDataGdrn, web3, accounts, 
         }
         $RAIN
       </Text>
+      <Text fontSize="sm" mb="20px" textAlign="center" color="gray.200" mt="0px">received RAIN will be available in Dividends</Text>
       <Button variant="solid" bg="teal.500" ml="auto" display="block" m="10px" ml="auto" mr="auto" width="150px" onClick={handleUnstakeRain}>Unstake</Button>
     </>
   )

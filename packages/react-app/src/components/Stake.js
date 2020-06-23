@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { addresses, abis } from "@project/contracts";
-import { Heading, Text, Button,
+import { Heading, Text, Button, Link,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -48,6 +48,7 @@ export default function Stake({ multiDataRain, multiDataGdrn, web3, accounts, pr
       <Heading mb="20px">Stake</Heading>
       <Text fontSize="lg" w="200px" p="10px" display="inline-block">Wallet $RAIN</Text>
       <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataGdrn.userRain)}</Text>
+      <Link fontSize="sm" w="200px" color="teal.200" href="https://uniswap.exchange/swap?outputCurrency=0x61cdb66e56fad942a7b5ce3f419ffe9375e31075">buy on uniswap</Link>
       <br/>
       <Text fontSize="lg" w="200px" p="10px" display="inline-block">Approved $RAIN</Text>
       <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataRain.userAllowance)}</Text>
@@ -56,7 +57,7 @@ export default function Stake({ multiDataRain, multiDataGdrn, web3, accounts, pr
       <NumberInput value={stakeValue} min={1} max={1000000000}   w="50%" ml="auto" mr="auto" color="gray.700" >
         <NumberInputField onChange={e => {setStakeValue(e.target.value)}} />
       </NumberInput>
-      <Text fontSize="lg" p="10px" pb="0px" mb="0px" textAlign="center">
+      <Text fontSize="lg" p="10px" pb="0px" mb="20px" textAlign="center">
         Receive
         {web3 ?
           " "+(stakeValue * multiDataGdrn.sellPrice )+" "
@@ -65,7 +66,6 @@ export default function Stake({ multiDataRain, multiDataGdrn, web3, accounts, pr
         }
         $GDRN
       </Text>
-      <Text fontSize="sm" mb="20px" textAlign="center" color="gray.200" mt="0px">received RAIN will be available in Dividends</Text>
       <Button variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="150px" onClick={handleApproveRain}>Approve $RAIN</Button>
       <Button variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="150px" onClick={handleStakeRain}>Stake $RAIN</Button>
     </>

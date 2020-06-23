@@ -156,10 +156,10 @@ function App() {
           <Text color="gray.500">Tax Rate: 10%</Text>
         </Box>
         <Box maxW="600px" p="20px" ml="auto" mr="auto">
-          <Text fontSize="lg" w="100%" p="0" >Stake your $RAIN and earn $GDRN in this stable hourglass game.</Text>
-          <Text fontSize="lg" w="100%" p="0" >The value of $GDRN is stable and not affected by buys or sells.</Text>
-          <Text fontSize="lg" w="100%" p="0" >Whenever someone stakes or unstakes their $RAIN, a 10% tax is distributed proportionally to all stakers.</Text>
+          <Text fontSize="lg" w="100%" p="0" >Stake your $RAIN and get $GDRN in this stable hourglass game.</Text>
+          <Text fontSize="lg" w="100%" p="0" >Whenever someone stakes or unstakes their $RAIN, a 10% tax is distributed proportionally to all $GDRN holders.</Text>
           <Text fontSize="lg" w="100%" p="0" >Stake your $RAIN, get $GDRN, and grow your stack!</Text>
+          <Text fontSize="lg" w="100%" p="0" >1 $GDRN = 1 $RAIN.</Text>
         </Box>
         { isActive ?
           (
