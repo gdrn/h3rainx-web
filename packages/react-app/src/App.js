@@ -47,7 +47,7 @@ function App() {
       <Box w="100%" minH="100vh" bg="gray.800" color="gray.100" position="relative"  p="20px" >
         <Flex maxW="100vw" h="70px" align="center" mb="50px">
           <Image src="/gdrn-logo.png" alt="Gold Rain Logo" display="inline-block" m="20px" w="50px" h="50px" />
-          <Heading as="h1" display="inline-block">Gold Rain</Heading>
+          <Heading as="h1" display="inline-block">Gold Rain : GDRN</Heading>
         </Flex>
           <Box maxW="600px" p="20px" ml="auto" mr="auto">
             <Text fontSize="lg" w="100%" p="20px" p="0" >Stake your $RAIN and earn $GDRN in this stable hourglass game.</Text>
@@ -60,13 +60,22 @@ function App() {
                 <Link color="teal.300" href="https://discord.gg/vqX47KK">Discord</Link>
               </Text>
               <Text fontSize="3xl" w="100%" p="20px" p="0" >
-                <Link color="teal.300" href="https://discord.gg/vqX47KK">Etherscan</Link>
+                <Link color="teal.300" href="https://etherscan.io/address/0xf56ccb441153119a373f0ad4909b8f50121a33bd">Etherscan</Link>
               </Text>
               <Text fontSize="3xl" w="100%" p="20px" p="0" >
                 <Link color="teal.300" href="https://rainnetwork.online/">RainNetwork</Link>
               </Text>
           </Box>
         <CountDown expiryTimestamp={time} />
+      </Box>
+      <Box w="100%" minH="100px" bg="gray.600" color="gray.200" position="relative"  p="40px" textAlign="center" >
+        <Link color="gray.400" m="10px" href="https://discord.gg/vqX47KK">Discord</Link>
+        <Link color="gray.400" m="10px" href="https://etherscan.io/address/0xf56ccb441153119a373f0ad4909b8f50121a33bd">Etherscan</Link>
+        <Link color="gray.400" m="10px" href="https://github.com/gdrn/goldenrain-web">Github</Link>
+        <Link color="gray.400" m="10px" href="https://rainnetwork.online/">RainNetwork</Link>
+      </Box>
+      <Box w="100%" minH="100px" bg="gray.600" color="gray.500" position="relative"  textAlign="center" >
+        © 2020 Gold Rain. All rights reserved.
       </Box>
     </ThemeProvider>
   );
