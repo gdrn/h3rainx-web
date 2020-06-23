@@ -15,6 +15,15 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider"
 
 import CountDown from "./components/CountDown"
+import Stake from "./components/Stake"
+import Unstake from "./components/Unstake"
+import Dividends from "./components/Dividends"
+
+function shortenDecimal(decimalString) {
+  decimalString = decimalString.toString()
+  if(!decimalString.includes('.')) return decimalString
+  return decimalString.substring(0,decimalString.indexOf('.'))
+}
 
 
 const providerOptions = {
@@ -32,23 +41,26 @@ const web3Modal = new Web3Modal({
   providerOptions // required
 });
 
-const GET_TRANSFERS = gql`
-  {
-    transfers(first: 10) {
-      id
-      from
-      to
-      value
-    }
-  }
-`;
-
 function App() {
-  const { loading, error, data } = useQuery(GET_TRANSFERS);
 
   const [provider, setProvider] = useState(null)
   const [web3, setWeb3] = useState(null)
+  const [goldRainContract, setGoldRainContract] = useState(null)
+  const [rainContract, setRainContract] = useState(null)
   const [accounts, setAccounts] = useState([])
+  const [multiDataGdrn, setMultiDataGdrn] = useState({
+    contractRain: 0,
+    totalGdrn:    0,
+    userGdrn:     0,
+    userRain:     0,
+    userDivs:     0,
+    buyPrice:     0,
+    sellPrice:    0,
+    userPct:      0,
+  })
+  const [multiDataRain, setMultiDataRain] = useState({
+    userAllowance: 0
+  })
 
   const getWeb3 = async () => {
     console.log('getting web3')
@@ -76,10 +88,44 @@ function App() {
     setWeb3(web3)
     const accounts = await web3.eth.getAccounts()
     setAccounts(accounts)
+    const goldRainContract = new web3.eth.Contract(abis.goldenRain, addresses.goldenRain)
+    setGoldRainContract(goldRainContract)
+    const rainContract = new web3.eth.Contract(abis.erc20, addresses.rain)
+    setRainContract(rainContract)
+    const updateGdrnData = async () => {
+      const multiDataGdrn = await goldRainContract.methods.multiData().call({from:accounts[0]})
+      let userPct = "0"
+      if(multiDataGdrn["1"] !== "0"){
+        userPct = web3.utils.toBN(multiDataGdrn["2"]).mul(web3.utils.toBN(100)).div(web3.utils.toBN(multiDataGdrn["1"]))
+      }
+      setMultiDataGdrn({
+        contractRain: web3.utils.fromWei(multiDataGdrn["0"]),
+        totalGdrn:    web3.utils.fromWei(multiDataGdrn["1"]),
+        userGdrn:     web3.utils.fromWei(multiDataGdrn["2"]),
+        userRain:     web3.utils.fromWei(multiDataGdrn["3"]),
+        userDivs:     web3.utils.fromWei(multiDataGdrn["4"]),
+        buyPrice:     web3.utils.fromWei(multiDataGdrn["5"]),
+        sellPrice:    web3.utils.fromWei(multiDataGdrn["6"]),
+        userPct:      userPct.toString()
+      })
+    }
+    const updateRainData = async () => {
+      const multiDataRain = await Promise.all([
+        rainContract.methods.allowance(accounts[0], addresses.goldenRain).call()
+      ])
+      setMultiDataRain({
+        userAllowance: web3.utils.fromWei(multiDataRain[0])
+      })
+    }
     window.ethereum.on("accountsChanged", async function() {
       const accounts = await web3.eth.getAccounts();
       setAccounts(accounts)
+      await updateGdrnData()
+      await updateRainData()
     });
+    await updateGdrnData()
+    setInterval(updateGdrnData, 1000)
+    setInterval(updateRainData, 1000)
   }
 
   useEffect(()=>{
@@ -87,7 +133,7 @@ function App() {
   },[])
 
   const time = Date.UTC(2020,5,24,7,0,0,0) // goldenrain acctivation
-  let isActive = false
+  let isActive = true
   if (Date.now() > time )
     isActive = true
 
@@ -95,7 +141,7 @@ function App() {
     <ThemeProvider theme={theme} >
       <CSSReset />
       <Box w="100%" minH="100vh" bg="gray.800" bgImage="radial-gradient(#2D3748,#1A202C)" color="gray.100" position="relative"  p="20px" >
-        <Flex maxW="100vw" h="70px" align="center" mb="50px">
+        <Flex maxW="100vw" h="70px" align="center" >
           <Image src="/gdrn-logo.png" alt="Gold Rain Logo" display="inline-block" m="20px" w="50px" h="50px" />
           <Heading as="h1" display="inline-block">Gold Rain : GDRN</Heading>
           { web3 && accounts[0] ?
@@ -104,6 +150,11 @@ function App() {
             (<Button variant="solid" bg="teal.500" ml="auto" onClick={getWeb3}>Connect</Button>)
           }
         </Flex>
+        <Box maxW="600px" p="20px" >
+          <Text color="gray.500" >Contract $RAIN: {shortenDecimal(multiDataGdrn.contractRain)}</Text>
+          <Text color="gray.500">Total $GDRN: {shortenDecimal(multiDataGdrn.totalGdrn)}</Text>
+          <Text color="gray.500">Tax Rate: 10%</Text>
+        </Box>
         <Box maxW="600px" p="20px" ml="auto" mr="auto">
           <Text fontSize="lg" w="100%" p="0" >Stake your $RAIN and earn $GDRN in this stable hourglass game.</Text>
           <Text fontSize="lg" w="100%" p="0" >The value of $GDRN is stable and not affected by buys or sells.</Text>
@@ -123,65 +174,51 @@ function App() {
 
                 <TabPanels>
                   <TabPanel>
-                    <Heading mb="20px">Stake</Heading>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block">Wallet $RAIN</Text>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">00000000000</Text>
-                    <br/>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block">Approved $RAIN</Text>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">0</Text>
-                    <br/>
-                    <Text fontSize="lg" p="10px" mt="20px" textAlign="center">$RAIN:</Text>
-                    <NumberInput step={1} defaultValue={1000} min={1} max={1000000000} w="50%" ml="auto" mr="auto" color="gray.700">
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                    <Text fontSize="lg" p="10px" mb="20px" textAlign="center">Receive 0.00 $GDRN</Text>
-                    <Button variant="solid" bg="teal.500" ml="auto" display="block" m="10px" ml="auto" mr="auto" width="150px">Approve $RAIN</Button>
-                    <Button variant="solid" bg="teal.500" ml="auto" display="block" m="10px" ml="auto" mr="auto" width="150px">Stake $RAIN</Button>
+                    <Stake
+                      multiDataRain={multiDataRain}
+                      multiDataGdrn={multiDataGdrn}
+                      web3={web3}
+                      accounts={accounts}
+                      provider={provider}
+                      goldRainContract={goldRainContract}
+                      rainContract={rainContract}
+                    />
                   </TabPanel>
                   <TabPanel>
-                    <Heading mb="20px">Unstake</Heading>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block">Wallet $GDRN</Text>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">0</Text>
-                    <br/>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block">Wallet Stake %</Text>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">0</Text>
-                    <br/>
-                    <Text fontSize="lg" p="10px" mt="20px" textAlign="center">$GDRN:</Text>
-                    <NumberInput step={1} defaultValue={1000} min={1} max={1000000000} w="50%" ml="auto" mr="auto" color="gray.700">
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                    <Text fontSize="lg" p="10px" mb="20px" textAlign="center">Receive 0.00 $RAIN</Text>
-                    <Button variant="solid" bg="teal.500" ml="auto" display="block" m="10px" ml="auto" mr="auto" width="150px">Unstake</Button>
+                    <Unstake
+                      multiDataRain={multiDataRain}
+                      multiDataGdrn={multiDataGdrn}
+                      web3={web3}
+                      accounts={accounts}
+                      provider={provider}
+                      goldRainContract={goldRainContract}
+                      rainContract={rainContract}
+                    />
                   </TabPanel>
                   <TabPanel>
-                    <Heading mb="20px">Dividends</Heading>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block">$RAIN Dividends</Text>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">0</Text>
-                    <br/>
-                    <Button variant="solid" bg="teal.500" ml="auto" display="block" m="10px" ml="auto" mr="auto" width="150px">Reinvest</Button>
-                    <Button variant="solid" bg="teal.500" ml="auto" display="block" m="10px" ml="auto" mr="auto" width="150px">Withdraw</Button>
+                    <Dividends
+                      multiDataRain={multiDataRain}
+                      multiDataGdrn={multiDataGdrn}
+                      web3={web3}
+                      accounts={accounts}
+                      provider={provider}
+                      goldRainContract={goldRainContract}
+                      rainContract={rainContract}
+                    />
                   </TabPanel>
                   <TabPanel position="relative">
                     <Heading mb="20px">Profile</Heading>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block">$RAIN Balance</Text>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">0</Text>
+                    <Text fontSize="lg" w="200px" p="10px" display="inline-block">$RAIN Wallet</Text>
+                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataGdrn.userRain)}</Text>
                     <br/>
                     <Text fontSize="lg" w="200px" p="10px" display="inline-block">$RAIN Dividends</Text>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">0</Text>
+                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataGdrn.userDivs)}</Text>
                     <br/>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block">GDRN Balance</Text>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">0</Text>
+                    <Text fontSize="lg" w="200px" p="10px" display="inline-block">$GDRN Balance</Text>
+                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataGdrn.userGdrn)}</Text>
                     <br/>
                     <Text fontSize="lg" w="200px" p="10px" display="inline-block">Stake %</Text>
-                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">0</Text>
+                    <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataGdrn.userPct)}%</Text>
                     <br/>
                     <Text fontSize="lg" p="10px" display="block" mt="20px">Earn 2% commissions when anyone uses your link.</Text>
                     <Box bg="transparent" border="solid" width="100%" p="20px">
