@@ -9,7 +9,7 @@ dataSources:
     network: mainnet
     source:
       abi: goldenrain
-      address: "0xF56ccB441153119A373F0aD4909B8f50121a33bd"
+      address: "0x1c02C78f1d3b8cA2cB93E3239b1613B96Bb04Ccd"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3

@@ -33,7 +33,7 @@ async function readOnchainBalance() {
 function App() {
   const { loading, error, data } = useQuery(GET_TRANSFERS);
 
-  const time = new Date("2020-06-24T07:00:00+00:00") // goldenrain acctivation
+  const time = Date.UTC(2020,5,24,7,0,0,0) // goldenrain acctivation
 
   React.useEffect(() => {
     if (!loading && !error && data && data.transfers) {
