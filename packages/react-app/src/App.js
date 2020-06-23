@@ -44,7 +44,7 @@ function App() {
   return (
     <ThemeProvider theme={theme} >
       <CSSReset />
-      <Box w="100%" minH="100vh" bg="gray.800" color="gray.100" position="relative"  p="20px" >
+      <Box w="100%" minH="100vh" bg="gray.800" bgImage="radial-gradient(#2D3748,#1A202C)" color="gray.100" position="relative"  p="20px" >
         <Flex maxW="100vw" h="70px" align="center" mb="50px">
           <Image src="/gdrn-logo.png" alt="Gold Rain Logo" display="inline-block" m="20px" w="50px" h="50px" />
           <Heading as="h1" display="inline-block">Gold Rain : GDRN</Heading>
