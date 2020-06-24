@@ -24,9 +24,9 @@ export default function Unstake({ multiDataRain, multiDataGdrn, web3, accounts, 
       alert("Must unstake at least 1 GDRN.")
       return
     }
-    console.log(web3.utils.toBN(multiDataRain.userAllowance))
-    console.log(unstakeValueBN)
-    if(unstakeValueBN.gt(web3.utils.toBN(multiDataGdrn.userGdrn))){
+    const userGdrnWei = web3.utils.toBN(web3.utils.toWei(multiDataGdrn.userGdrn,"ether"))
+    const unstakeValueBNWei = web3.utils.toBN(web3.utils.toWei(unstakeValueBN))
+    if(unstakeValueBNWei.gt(userGdrnWei)){
       alert("Cannot unstake more than you hold.")
       return
     }
