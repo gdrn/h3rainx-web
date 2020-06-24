@@ -95,7 +95,12 @@ function App() {
     const rainContract = new web3.eth.Contract(abis.erc20, addresses.rain)
     setRainContract(rainContract)
     const updateGdrnData = async () => {
-      const multiDataGdrn = await goldRainContract.methods.multiData().call()
+      let multiDataGdrn;
+      if(!accounts || accounts.length < 1){
+        multiDataGdrn = await goldRainContract.methods.multiData().call()
+      }else{
+        multiDataGdrn = await goldRainContract.methods.multiData().call({from:accounts[0]})
+      }
       let userPct = "0"
       if(multiDataGdrn["1"] !== "0"){
         userPct = web3.utils.toBN(multiDataGdrn["2"]).mul(web3.utils.toBN(100)).div(web3.utils.toBN(multiDataGdrn["1"]))
@@ -129,6 +134,7 @@ function App() {
       });
     }
     await updateGdrnData()
+    await updateRainData()
     setInterval(updateGdrnData, 1000)
     setInterval(updateRainData, 1000)
   }
@@ -138,7 +144,7 @@ function App() {
   },[])
 
   const time = Date.UTC(2020,5,24,7,0,0,0) // goldenrain acctivation
-  let isActive = false
+  let isActive = true
   if (Date.now() > time )
     isActive = true
 
