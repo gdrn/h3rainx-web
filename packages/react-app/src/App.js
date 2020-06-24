@@ -85,7 +85,7 @@ function App() {
     }
     // If no injected web3 instance is detected, use infura
     else {
-      provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/80234bcec5d848e0b3471f49c8cd7303')
+      provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/10f07607e8bc41f2be28c1c6d89bc242')
       interval = 5000 //prevent overloading infura
     }
     setProvider(provider)
