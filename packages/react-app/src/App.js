@@ -41,6 +41,8 @@ const web3Modal = new Web3Modal({
   providerOptions // required
 });
 
+let interval = 500
+
 function App() {
 
   let isMM = false;
@@ -84,6 +86,7 @@ function App() {
     // If no injected web3 instance is detected, use infura
     else {
       provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/80234bcec5d848e0b3471f49c8cd7303')
+      interval = 5000 //prevent overloading infura
     }
     setProvider(provider)
     const web3 = new Web3(provider)
@@ -135,8 +138,8 @@ function App() {
     }
     await updateGdrnData()
     await updateRainData()
-    setInterval(updateGdrnData, 1000)
-    setInterval(updateRainData, 1000)
+    setInterval(updateGdrnData, interval)
+    setInterval(updateRainData, interval)
   }
 
   useEffect(()=>{
