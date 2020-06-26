@@ -168,7 +168,7 @@ function App() {
   },[])
 
   const time = Date.UTC(2020,5,27,7,0,0,0)
-  let isActive = true
+  let isActive = false
   if (Date.now() > time )
     isActive = true
 
@@ -274,7 +274,7 @@ function App() {
                           <Text fontSize="lg" p="10px" display="block" mt="20px">Earn 2% commissions when anyone uses your link.</Text>
                           <Box bg="transparent" border="solid" width="100%" p="20px">
                             <Text fontSize="lg" display="block" textAlign="center">
-                              https://h3rainx.vercel.app/#/{accounts[0]}
+                              https://h3rainx.app/#/{accounts[0]}
                             </Text>
                           </Box>
                         </>
