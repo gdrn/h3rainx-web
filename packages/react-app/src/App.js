@@ -195,7 +195,7 @@ function App() {
           <Text fontSize="lg" w="100%" p="0" >Stake your $RAIN+$H3X and get $H3RX in this stable hourglass game.</Text>
           <Text fontSize="lg" w="100%" p="0" >Whenever someone stakes or unstakes their $RAIN+$H3X, a 10% tax is distributed proportionally to all $H3RX holders.</Text>
           <Text fontSize="lg" w="100%" p="0" >Stake 4 $RAIN + 1 $H3X to get 1 $H3RX and grow your stack! </Text>
-          <Text fontSize="lg" w="100%" p="0" >1 $H3RX = 4 $H3RX + 1 $H3X.</Text>
+          <Text fontSize="lg" w="100%" p="0" >1 $H3RX = 4 $RAIN + 1 $H3X.</Text>
         </Box>
         { isActive ?
           (
