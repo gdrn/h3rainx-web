@@ -50,6 +50,7 @@ export default function Stake({
   }
 
   const handleStake = async () => {
+    const requestValue = Math.floor(stakeValue*0.9)
     const stakeValueBN = web3.utils.toBN(stakeValue)
     if(stakeValueBN.lt(web3.utils.toBN(1))) {
       alert("Must stake at least 1 H3X and 4 RAIN.")
@@ -71,7 +72,7 @@ export default function Stake({
       alert("Not enough H3X. Requires 1x Base.")
       return
     }
-    await h3rainxContract.methods.buy(web3.utils.toWei(stakeValueBN,'ether'),referralAddress).send({from:accounts[0]})
+    await h3rainxContract.methods.buy(web3.utils.toWei(web3.utils.toBN(requestValue.toString()),'ether'),referralAddress).send({from:accounts[0]})
   }
 
   return (
@@ -96,16 +97,17 @@ export default function Stake({
       <NumberInput value={stakeValue} min={1} max={1000000000}   w="50%" ml="auto" mr="auto" color="gray.700" >
         <NumberInputField onChange={e => {setStakeValue(e.target.value)}} />
       </NumberInput>
-      <Text fontSize="lg" p="10px" pb="0px" mb="20px" textAlign="center">
+      <Text fontSize="lg" p="10px" pb="0px"  textAlign="center">
         Receive
         {web3 ?
-          " "+(stakeValue * 0.9 )+" "
+          " "+(stakeValue * 0.9 * 0.9 )+" "
           :
           " 0.00 "
         }
         $H3RX
       </Text>
-      <Button variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="250px" onClick={handleApproveRain}>Approve 4xBASE $RAIN</Button>
+      <Text fonSize="sm" textAlign="center">includes H3X and Rain network taxes</Text>
+      <Button mt="20px" variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="250px" onClick={handleApproveRain}>Approve 4xBASE $RAIN</Button>
       <Button variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="250px" onClick={handleApproveH3x}>Approve 1xBASE $H3X</Button>
       <Button variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="250px" onClick={handleStake}>Stake</Button>
     </>

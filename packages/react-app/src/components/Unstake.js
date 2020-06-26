@@ -59,7 +59,7 @@ export default function Unstake({
       <Text fontSize="lg" p="10px" pb="0px" textAlign="center">
         Receive
         {web3 ?
-          " "+(unstakeValue * 0.9 * 4 )+" "
+          " "+(unstakeValue * 0.9 * 0.99 * 4 )+" "
           :
           " 0.00 "
         }
@@ -68,7 +68,7 @@ export default function Unstake({
       <Text fontSize="lg" p="10px" pb="0px" textAlign="center">
         Receive
         {web3 ?
-          " "+(unstakeValue * 0.9 )+" "
+          " "+(unstakeValue * 0.9 * 0.9 )+" "
           :
           " 0.00 "
         }
