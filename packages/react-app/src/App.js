@@ -168,7 +168,7 @@ function App() {
   },[])
 
   const time = Date.UTC(2020,5,27,7,0,0,0)
-  let isActive = false
+  let isActive = true
   if (Date.now() > time )
     isActive = true
 

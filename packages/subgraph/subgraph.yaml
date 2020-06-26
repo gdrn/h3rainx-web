@@ -9,7 +9,7 @@ dataSources:
     network: mainnet
     source:
       abi: h3rainx
-      address: "0xa5b6e81d248fb089114caded295babe24f7d73dc"
+      address: "0xd9d93ee6ccefa5be508a33c2e68b29b352417597"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
