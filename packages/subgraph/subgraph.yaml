@@ -5,17 +5,17 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: GoldenRain
+    name: H3RainX
     network: mainnet
     source:
-      abi: goldenrain
-      address: "0x438f8795f8dFb195140eEB5eaD8b0e794Bf33Ee8"
+      abi: h3rainx
+      address: "0xa5b6e81d248fb089114caded295babe24f7d73dc"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
       abis:
-        - name: goldenrain
-          file: ../contracts/src/abis/goldenrain.json
+        - name: h3rainx
+          file: ../contracts/src/abis/h3rainx.json
       entities:
         - Token
         - Transfer

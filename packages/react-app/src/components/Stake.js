@@ -14,7 +14,17 @@ function shortenDecimal(decimalString) {
   return decimalString.substring(0,decimalString.indexOf('.'))
 }
 
-export default function Stake({ multiDataRain, multiDataGdrn, web3, accounts, provider, rainContract, goldRainContract }) {
+export default function Stake({
+  multiDataRain,
+  multiDataH3x,
+  multiDataH3rx,
+  web3,
+  accounts,
+  provider,
+  h3rainxContract,
+  h3xContract,
+  rainContract
+}) {
 
   const [stakeValue, setStakeValue] = useState(1000)
 
@@ -23,51 +33,81 @@ export default function Stake({ multiDataRain, multiDataGdrn, web3, accounts, pr
 
   const handleApproveRain = async () => {
     const stakeValueBN = web3.utils.toBN(stakeValue)
-    if(stakeValueBN.lt(web3.utils.toBN(1))) {
-      alert("Must stake at least 1 RAIN.")
+    if(stakeValueBN.lt(web3.utils.toBN(4))) {
+      alert("Must stake at least 4 RAIN.")
       return
     }
-    await rainContract.methods.approve(addresses.goldenRain,web3.utils.toWei(stakeValueBN,'ether')).send({from:accounts[0]})
+    await rainContract.methods.approve(addresses.h3rainx,web3.utils.toWei(stakeValueBN.mul(web3.utils.toBN(4)),'ether')).send({from:accounts[0]})
   }
 
-  const handleStakeRain = async () => {
+  const handleApproveH3x = async () => {
     const stakeValueBN = web3.utils.toBN(stakeValue)
     if(stakeValueBN.lt(web3.utils.toBN(1))) {
-      alert("Must stake at least 1 RAIN.")
+      alert("Must stake at least 1 H3x.")
       return
     }
-    if(stakeValueBN.gt(web3.utils.toBN(multiDataRain.userAllowance))){
+    await h3xContract.methods.approve(addresses.h3rainx,web3.utils.toWei(stakeValueBN,'ether')).send({from:accounts[0]})
+  }
+
+  const handleStake = async () => {
+    const stakeValueBN = web3.utils.toBN(stakeValue)
+    if(stakeValueBN.lt(web3.utils.toBN(1))) {
+      alert("Must stake at least 1 H3X and 4 RAIN.")
+      return
+    }
+    if(stakeValueBN.mul(web3.utils.toBN(4)).gt(web3.utils.toBN(multiDataRain.userAllowance))){
       alert("Must approve RAIN before you stake.")
       return
     }
-    await goldRainContract.methods.buy(web3.utils.toWei(stakeValueBN,'ether'),referralAddress).send({from:accounts[0]})
+    if(stakeValueBN.gt(web3.utils.toBN(multiDataH3x.userAllowance))){
+      alert("Must approve H3X before you stake.")
+      return
+    }
+    if(stakeValueBN.mul(web3.utils.toBN(4)).gt(web3.utils.toBN(shortenDecimal(multiDataH3rx.userRain)))){
+      alert("Not enough Rain. Requires 4x Base.")
+      return
+    }
+    if(stakeValueBN.gt(web3.utils.toBN(shortenDecimal(multiDataH3rx.userH3x)))){
+      alert("Not enough H3X. Requires 1x Base.")
+      return
+    }
+    await h3rainxContract.methods.buy(web3.utils.toWei(stakeValueBN,'ether'),referralAddress).send({from:accounts[0]})
   }
 
   return (
     <>
       <Heading mb="20px">Stake</Heading>
+      <Text fontSize="sm" p="20px">Remember - you will need 4 RAIN for every 1 H3X to make H3RainX.</Text>
       <Text fontSize="lg" w="200px" p="10px" display="inline-block">Wallet $RAIN</Text>
-      <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataGdrn.userRain)}</Text>
-      <Link fontSize="sm" w="200px" color="teal.200" href="https://uniswap.exchange/swap?outputCurrency=0x61cdb66e56fad942a7b5ce3f419ffe9375e31075">buy on uniswap</Link>
+      <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataH3rx.userRain)}</Text>
+      <Link fontSize="sm" w="200px" color="teal.200" href={"https://uniswap.exchange/swap?outputCurrency="+addresses.rain}>buy on uniswap</Link>
+      <br/>
+      <Text fontSize="lg" w="200px" p="10px" display="inline-block">Wallet $H3X</Text>
+      <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataH3rx.userH3x)}</Text>
+      <Link fontSize="sm" w="200px" color="teal.200" href={"https://uniswap.exchange/swap?outputCurrency="+addresses.h3x}>buy on uniswap</Link>
       <br/>
       <Text fontSize="lg" w="200px" p="10px" display="inline-block">Approved $RAIN</Text>
       <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataRain.userAllowance)}</Text>
       <br/>
-      <Text fontSize="lg" p="10px" mt="20px" textAlign="center">$RAIN:</Text>
+      <Text fontSize="lg" w="200px" p="10px" display="inline-block">Approved $H3X</Text>
+      <Text fontSize="lg" w="200px" p="10px" display="inline-block" textAlign="right">{shortenDecimal(multiDataH3x.userAllowance)}</Text>
+      <br/>
+      <Text fontSize="lg" p="10px" mt="20px" textAlign="center">BASE:</Text>
       <NumberInput value={stakeValue} min={1} max={1000000000}   w="50%" ml="auto" mr="auto" color="gray.700" >
         <NumberInputField onChange={e => {setStakeValue(e.target.value)}} />
       </NumberInput>
       <Text fontSize="lg" p="10px" pb="0px" mb="20px" textAlign="center">
         Receive
         {web3 ?
-          " "+(stakeValue * multiDataGdrn.sellPrice )+" "
+          " "+(stakeValue * 0.9 )+" "
           :
           " 0.00 "
         }
-        $GDRN
+        $H3RX
       </Text>
-      <Button variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="150px" onClick={handleApproveRain}>Approve $RAIN</Button>
-      <Button variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="150px" onClick={handleStakeRain}>Stake $RAIN</Button>
+      <Button variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="250px" onClick={handleApproveRain}>Approve 4xBASE $RAIN</Button>
+      <Button variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="250px" onClick={handleApproveH3x}>Approve 1xBASE $H3X</Button>
+      <Button variant="solid" bg="teal.500" display="block" m="10px" ml="auto" mr="auto" width="250px" onClick={handleStake}>Stake</Button>
     </>
   )
 
