@@ -122,7 +122,7 @@ function App() {
         totalH3rx: web3.utils.fromWei(multiDataH3rainx["2"]),
         userH3rx:  web3.utils.fromWei(multiDataH3rainx["3"]),
         userRain:     web3.utils.fromWei(multiDataH3rainx["4"]),
-        userH3x:      web3.utils.fromWei(multiDataH3rainx["5"]),
+        userH3x:      (!accounts || accounts.length < 1) ? "0" : web3.utils.fromWei(multiDataH3rainx["5"]),
         userDivsRain: web3.utils.fromWei(web3.utils.toBN(multiDataH3rainx["6"]).mul(web3.utils.toBN(4))),
         userDivsH3x:  web3.utils.fromWei(multiDataH3rainx["6"]),
         userPct:      userPct.toString()
@@ -168,7 +168,7 @@ function App() {
   },[])
 
   const time = Date.UTC(2020,5,27,7,0,0,0)
-  let isActive = false
+  let isActive = true
   if (Date.now() > time )
     isActive = true
 
