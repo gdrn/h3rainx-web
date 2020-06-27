@@ -115,7 +115,6 @@ function App() {
       if(multiDataH3rainx["1"] !== "0"){
         userPct = web3.utils.toBN(multiDataH3rainx["3"]).mul(web3.utils.toBN(100)).div(web3.utils.toBN(multiDataH3rainx["2"]))
       }
-      console.log(multiDataH3rainx)
       setMultiDataH3rx({
         contractH3x:  web3.utils.fromWei(multiDataH3rainx["0"]),
         contractRain: web3.utils.fromWei(multiDataH3rainx["1"]),
@@ -310,6 +309,7 @@ function App() {
       <Box w="100%" minH="100px" bg="gray.800" color="gray.200" position="relative"  p="20px" pt="80px" textAlign="center" fontSize={{base:"sm", md:"md"}} >
         <Link color="gray.600" m="5px" href={"https://etherscan.io/address/"+addresses.h3rainx}>Etherscan</Link>
         <Link color="gray.600" m="5px" href="https://github.com/gdrn/h3rainx-web">Github</Link>
+        <Link color="gray.600" m="5px" href="https://t.me/H3Rainx">Telegram</Link>
         <Link color="gray.600" m="5px" href="https://rainnetwork.online/">Rain</Link>
         <Link color="gray.600" m="5px" href="https://h3x.exchange/">H3X</Link>
       </Box>
